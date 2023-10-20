@@ -174,46 +174,34 @@ exports.config = {
 <TabItem value="android-config" label="android-single.conf.js" default>
 
 ```javascript title="android/android-single.conf.js"
-exports.config = {
-  user: process.env.LT_USERNAME || "YOUR_USERNAME",
-  key: process.env.LT_ACCESS_KEY || "YOUR_ACCESS_KEY",
 
-  updateJob: false,
-  //highlight-next-line
-  specs: ["specs/android-test.js"], //path of your test script
-  exclude: [],
+// Check if elemement is visible this isElementVisible(xpath) taken the xpath and returns true or false
+async function isElementVisible(xpath) {
+        const element = await driver.$(xpath);
+        return await element.isDisplayed();
 
-  //highlight-start
-  capabilities: [
-    {
-      build: "NodeJS WebDriverIO Android",
-      name: "Sample Test - WebDriverIO",
-      isRealMobile: true,
-      platformName: "Android",
-      deviceName: "Galaxy S9",
-      platformVersion: "10",
-      app: "YOUR_APP_URL",
-    },
-  ],
-  //highlight-end
+//If the isElementVisible(xpath) returns true then it will not go inside while loop and if its false it will go inside while loop and will swipe until isElementVisible(xpath) returns true and it breaks
 
-  logLevel: "info",
-  coloredLogs: true,
-  screenshotPath: "./errorShots/",
-  baseUrl: "",
-  waitforTimeout: 10000,
-  connectionRetryTimeout: 90000,
-  connectionRetryCount: 3,
-  path: "/wd/hub",
-  hostname: "mobile-hub.lambdatest.com",
-  port: 80,
+      while (!await isElementVisible(countryXPath)) {
+        // Determine start and end coordinates for the scroll
+        const startX = 300; // Starting X-coordinate
+        const startY = 1000; // Starting Y-coordinate
+        const endX = 300; // Ending X-coordinate (same as start for a simple scroll)
+        const endY = 500; // Ending Y-coordinate
 
-  framework: "mocha",
-  mochaOpts: {
-    ui: "bdd",
-    timeout: 20000,
-  },
-};
+        // Perform the scroll using touchAction
+        await driver.touchAction([
+          { action: 'press', x: startX, y: startY },
+          { action: 'wait', ms: 1000 }, // Wait for a second
+          { action: 'moveTo', x: endX, y: endY },
+          { action: 'release' }
+        ]);
+
+        console.log("Scrolling...");
+
+        // You can also introduce a timeout to prevent infinite looping
+        // await new Promise(resolve => setTimeout(resolve, 5000)); // 5-second delay, adjust as needed
+      }
 ```
 
 </TabItem>
